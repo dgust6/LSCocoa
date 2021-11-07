@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "LSData",
+        "repositoryURL": "https://github.com/dinogustinn/LSData.git",
+        "state": {
+          "branch": "master",
+          "revision": "aa74e18b28f67e06f4209dc9e23c843751a6f9cc",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
