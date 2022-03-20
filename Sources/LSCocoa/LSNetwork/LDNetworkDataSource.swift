@@ -36,20 +36,9 @@ public class LSNetworkDataSource: DataSource {
         URLCache.shared.removeAllCachedResponses()
     }
     
-    public func publisher(parameter: URLRequest?) -> AnyPublisher<Data, LSNetworkError> {
-        guard let request = parameter else {
-            return Just(Data())
-                .tryMap { _ in
-                    throw LSNetworkError.badRequest
-                }
-                .mapError { error -> LSNetworkError in
-                    .badRequest
-                }
-                .eraseToAnyPublisher()
-        }
-        
+    public func publisher(parameter: URLRequest) -> AnyPublisher<Data, LSNetworkError> {
         return session
-            .dataTaskPublisher(for: request)
+            .dataTaskPublisher(for: parameter)
             .tryMap { data, response -> Data in
                 guard let httpResponse = response as? HTTPURLResponse else { throw LSNetworkError.notHttpResponse }
                 switch httpResponse.statusCode {

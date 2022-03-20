@@ -51,7 +51,7 @@ public class LSUserDefaultsItemRepository<T: Codable>: NSObject, DataBasicReposi
         userDefaults.set(nil, forKey: itemKey)
     }
     
-    public func publisher(parameter: ()?) -> AnyPublisher<T?, Never> {
+    public func publisher(parameter: ()) -> AnyPublisher<T?, Never> {
         subject.eraseToAnyPublisher()
     }
 }

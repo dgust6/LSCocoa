@@ -44,12 +44,12 @@ open class LSCoreDataRepository<ManagedObject>: DataRepository where ManagedObje
             .eraseToAnyPublisher()
     }
     
-    public func publisher(parameter: Parameter? = nil) -> AnyPublisher<StoredItem, Error> {
+    public func publisher(parameter: Parameter) -> AnyPublisher<StoredItem, Error> {
         let predicate = predicate(from: parameter)
         return publisher(predicate: predicate)
     }
     
-    public func fetch(parameter: Parameter? = nil) -> StoredItem {
+    public func fetch(parameter: Parameter) -> StoredItem {
         let predicate = predicate(from: parameter)
         let result: Result<[ManagedObject], Error> = stack.mainContext.fetch(with: predicate)
         switch result {
@@ -60,11 +60,10 @@ open class LSCoreDataRepository<ManagedObject>: DataRepository where ManagedObje
         }
     }
     
-    private func predicate(from parameter: Parameter?) -> NSPredicate? {
-        let parameters = parameter ?? []
-        let query = parameters.map { "\($0.attribute.key) == %@" }.joined(separator: " AND ")
-        let cvars = parameters.compactMap { $0.value as? CVarArg }
-        let predicate = parameters.isEmpty ? nil : NSPredicate(format: query, cvars)
+    private func predicate(from parameter: Parameter) -> NSPredicate? {
+        let query = parameter.map { "\($0.attribute.key) == %@" }.joined(separator: " AND ")
+        let cvars = parameter.compactMap { $0.value as? CVarArg }
+        let predicate = parameter.isEmpty ? nil : NSPredicate(format: query, cvars)
         return predicate
     }
         

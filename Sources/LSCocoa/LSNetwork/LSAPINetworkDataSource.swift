@@ -19,7 +19,8 @@ public class LSAPINetworkDataSource: DataSource {
         self.dataSource = dataSource
     }
     
-    public func publisher(parameter: Parameter?) -> AnyPublisher<Data, LSNetworkError> {
-        dataSource.publisher(parameter: endpoint.buildRequest(with: parameter ?? parameters))
+    public func publisher(parameter: Parameter) -> AnyPublisher<Data, LSNetworkError> {
+        let queryingParameter = parameter.isEmpty ? parameters : parameter
+        return dataSource.publisher(parameter: endpoint.buildRequest(with: queryingParameter))
     }
 }
