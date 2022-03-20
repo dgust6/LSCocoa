@@ -3,10 +3,9 @@ import CoreData
 import Combine
 
 public extension NSManagedObjectContext {
-    func changesPublisher<Object: NSManagedObject>(for fetchRequest: NSFetchRequest<Object>)
-        -> LSManagedObjectChangesPublisher<Object>
-    {
-        LSManagedObjectChangesPublisher(fetchRequest: fetchRequest, context: self)
+    func changesPublisher<Object: NSManagedObject>(for fetchRequest: NSFetchRequest<Object>, saveContext: NSManagedObjectContext? = nil)
+        -> LSManagedObjectChangesPublisher<Object> {
+        LSManagedObjectChangesPublisher(fetchRequest: fetchRequest, context: self, saveContext: saveContext)
     }
 }
 
@@ -16,14 +15,16 @@ public struct LSManagedObjectChangesPublisher<Object: NSManagedObject>: Publishe
 
     public let fetchRequest: NSFetchRequest<Object>
     public let context: NSManagedObjectContext
+    private let saveContext: NSManagedObjectContext?
 
-    public init(fetchRequest: NSFetchRequest<Object>, context: NSManagedObjectContext) {
+    public init(fetchRequest: NSFetchRequest<Object>, context: NSManagedObjectContext, saveContext: NSManagedObjectContext?) {
         self.fetchRequest = fetchRequest
         self.context = context
+        self.saveContext = saveContext
     }
 
     public func receive<S: Subscriber>(subscriber: S) where Failure == S.Failure, Output == S.Input {
-        let inner = Inner(downstream: subscriber, fetchRequest: fetchRequest, context: context)
+        let inner = Inner(downstream: subscriber, fetchRequest: fetchRequest, context: context, saveContext: saveContext)
         subscriber.receive(subscription: inner)
     }
 
@@ -36,7 +37,8 @@ public struct LSManagedObjectChangesPublisher<Object: NSManagedObject>: Publishe
         init(
             downstream: Downstream,
             fetchRequest: NSFetchRequest<Object>,
-            context: NSManagedObjectContext
+            context: NSManagedObjectContext,
+            saveContext: NSManagedObjectContext?
         ) {
             self.downstream = downstream
             fetchedResultsController
@@ -49,6 +51,13 @@ public struct LSManagedObjectChangesPublisher<Object: NSManagedObject>: Publishe
             super.init()
 
             fetchedResultsController!.delegate = self
+            
+            if let saveContext = saveContext {
+                NotificationCenter.default.addObserver(self,
+                                               selector: #selector(handleMainContextSaved),
+                                               name: .NSManagedObjectContextDidSave,
+                                               object: saveContext)
+            }
 
             do {
                 try fetchedResultsController!.performFetch()
@@ -90,6 +99,12 @@ public struct LSManagedObjectChangesPublisher<Object: NSManagedObject>: Publishe
             _ controller: NSFetchedResultsController<NSFetchRequestResult>
         ) {
             updateDiff()
+        }
+        
+        @objc private func handleMainContextSaved() {
+            fetchedResultsController?.managedObjectContext.perform { [weak self] in
+                self?.updateDiff()
+            }
         }
 
         override var description: String {

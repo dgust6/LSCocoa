@@ -15,7 +15,7 @@ class LSUserDefaultsRepository {
         let encoder = JSONEncoder()
         let value = try? encoder.encode(item)
         let repository = fetchCreateIfNeeded(for: key)
-        _ = repository.store(value)
+        repository.store(value)
     }
     
     public func publisher<T: Decodable>(for key: String = String(describing: T.self), ofType: T.Type = T.self) -> AnyPublisher<T?, Never> {

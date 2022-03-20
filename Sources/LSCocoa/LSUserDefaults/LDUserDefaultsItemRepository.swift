@@ -2,11 +2,10 @@ import Foundation
 import LSData
 import Combine
 
-public class LSUserDefaultsItemRepository<T: Codable>: NSObject, DataBasicRepository {
+public class LSUserDefaultsItemRepository<T: Codable>: NSObject, DataBasicRepository, DeletableStorage {
         
     public typealias Output = T?
     public typealias StoredItem = T?
-    public typealias StorageError = Never
     public typealias OutputError = Never
     
     let itemKey: String
@@ -35,11 +34,21 @@ public class LSUserDefaultsItemRepository<T: Codable>: NSObject, DataBasicReposi
         subject.send(decodedItem)
     }
     
-    @discardableResult
-    public func store(_ item: T?) -> AnyPublisher<(), Never> {
+    public var currentlySavedItem: T? {
+        subject.value
+    }
+    
+    public func store(_ item: T?) -> Void {
         let value = try? JSONEncoder().encode(item)
         userDefaults.set(value, forKey: itemKey)
-        return Just(()).eraseToAnyPublisher()
+    }
+    
+    public func delete(_ item: T?) -> () {
+        userDefaults.set(nil, forKey: itemKey)
+    }
+    
+    public func deleteAll() -> () {
+        userDefaults.set(nil, forKey: itemKey)
     }
     
     public func publisher(parameter: ()?) -> AnyPublisher<T?, Never> {

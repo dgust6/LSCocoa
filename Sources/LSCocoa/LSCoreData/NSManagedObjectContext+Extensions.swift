@@ -3,21 +3,21 @@ import CoreData
 
 public extension NSManagedObjectContext {
     
-    private func fetch<T: LSManagedObject>(with predicate: NSPredicate?, sortDescriptors: [NSSortDescriptor]? = nil) -> Result<[T], Error> {
+    func fetch<T: LSManagedObject>(with predicate: NSPredicate?, sortDescriptors: [NSSortDescriptor]? = nil) -> Result<[T], Error> {
         let fetchRequest = NSFetchRequest<T>(entityName: T.entityName)
         fetchRequest.predicate = predicate
         fetchRequest.sortDescriptors = sortDescriptors ?? [NSSortDescriptor(key: T.identityName, ascending: true)]
         do {
             let items = try self.fetch(fetchRequest)
             return .success(items)
-        } catch(let error) {
+        } catch let error {
             return .failure(error)
         }
     }
     
     func createEntity<T: LSManagedObject>(type: T.Type = T.self) -> T {
-        let entity = NSEntityDescription.insertNewObject(forEntityName: T.entityName, into: self)
-        return entity as! T
+        let entity = T(context: self)
+        return entity
     }
     
     func item<T: LSManagedObject>(by id: String, type: T.Type = T.self) -> Result<T?, Error> {
@@ -50,13 +50,13 @@ public extension NSManagedObjectContext {
     }
     
     @discardableResult
-    func delete<T: LSManagedObject>(_ item: T) -> Result<Void, Error>  {
+    func delete<T: LSManagedObject>(_ item: T) -> Result<Void, Error> {
         self.delete(item)
         return .success(())
     }
     
     @discardableResult
-    func delete<T: LSManagedObject>(_ items: [T]) -> Result<Void, Error>  {
+    func delete<T: LSManagedObject>(_ items: [T]) -> Result<Void, Error> {
         for item in items {
             self.delete(item)
         }
@@ -64,7 +64,7 @@ public extension NSManagedObjectContext {
     }
     
     @discardableResult
-    func delete<T: LSManagedObjectConvertible>(_ item: T) -> Result<Void, Error>  {
+    func delete<T: LSManagedObjectConvertible>(_ item: T) -> Result<Void, Error> {
         self.item(by: item.id, type: T.ManagedObject.self).map { fetchedItem -> Void in
             guard let fetchedItem = fetchedItem else { return }
             self.delete([fetchedItem])
@@ -73,7 +73,7 @@ public extension NSManagedObjectContext {
     }
     
     @discardableResult
-    func delete<T: LSManagedObjectConvertible>(_ items: [T]) -> Result<Void, Error>  {
+    func delete<T: LSManagedObjectConvertible>(_ items: [T]) -> Result<Void, Error> {
         self.items(with: items.map { $0.id }, type: T.ManagedObject.self).map { fetchedItems -> Void in
             self.delete(fetchedItems)
             return
@@ -82,7 +82,7 @@ public extension NSManagedObjectContext {
         
     //TODO: Replace with NSBatchDeleteRequest
     @discardableResult
-    func deleteAll<T: LSManagedObject>(type: T.Type) -> Result<Void, Error>  {
+    func deleteAll<T: LSManagedObject>(type: T.Type) -> Result<Void, Error> {
         allItems(type: type).map {
             for item in $0 {
                 delete(item)
@@ -91,7 +91,7 @@ public extension NSManagedObjectContext {
         }
     }
     
-    // Mark: Update
+    // MARK: Update
     
     func pairs<T: LSManagedObjectConvertible>(_ items: [T], type: T.Type = T.self) -> Result<[(T, T.ManagedObject?)], Error> {
         self.items(with: items.map { $0.id }, type: T.ManagedObject.self).map { fetchedItems in
@@ -134,4 +134,3 @@ public extension NSManagedObjectContext {
             }
     }
 }
-

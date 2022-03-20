@@ -5,7 +5,7 @@ import LSData
 public class LSAPINetworkStorage: DataStorage {
     
     public typealias StoredItem = [LSApiEndpointAttribute]
-    public typealias StorageError = LSNetworkError
+    public typealias StorageReturn = AnyPublisher<Data, LSNetworkError>
 
     public var endpoint: ApiEndpoint
 
@@ -16,8 +16,7 @@ public class LSAPINetworkStorage: DataStorage {
         self.dataSource = dataSource
     }
     
-    public func store(_ item: StoredItem) -> AnyPublisher<Data, StorageError> {
+    public func store(_ item: StoredItem) -> AnyPublisher<Data, LSNetworkError> {
         dataSource.publisher(parameter: endpoint.buildRequest(with: item))
-
     }
 }

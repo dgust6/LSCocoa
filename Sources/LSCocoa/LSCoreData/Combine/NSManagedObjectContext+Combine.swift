@@ -22,10 +22,10 @@ public extension NSManagedObjectContext {
             .eraseToAnyPublisher()
     }
     
-    func publishedItems<T: LSManagedObject>(for predicate: NSPredicate?, ofType: T.Type = T.self) -> AnyPublisher<[T], Error> {
-        let fetchRequest = NSFetchRequest<T.T>(entityName: T.entityName)
+    func publishedItems<T: LSManagedObject>(for predicate: NSPredicate?, ofType: T.Type = T.self, saveContext: NSManagedObjectContext? = nil) -> AnyPublisher<[T], Error> {
+        let fetchRequest = NSFetchRequest<T.ManagedObject>(entityName: T.entityName)
         fetchRequest.predicate = predicate
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: T.identityName, ascending: true)]
-        return changesPublisher(for: fetchRequest).eraseToAnyPublisher()
+        return changesPublisher(for: fetchRequest, saveContext: saveContext).eraseToAnyPublisher()
     }
 }
