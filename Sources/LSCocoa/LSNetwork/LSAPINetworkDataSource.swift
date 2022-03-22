@@ -8,7 +8,7 @@ public class LSAPINetworkDataSource: DataSource {
     public typealias Parameter = [LSApiEndpointAttribute]
     public typealias OutputError = LSNetworkError
     
-    public var endpoint: ApiEndpoint
+    public let endpoint: ApiEndpoint
     public var parameters: [LSApiEndpointAttribute]
     
     private let dataSource: LSAnyDataSource<Data, URLRequest, LSNetworkError>
@@ -20,7 +20,14 @@ public class LSAPINetworkDataSource: DataSource {
     }
     
     public func publisher(parameter: Parameter) -> AnyPublisher<Data, LSNetworkError> {
-        let queryingParameter = parameter.isEmpty ? parameters : parameter
-        return dataSource.publisher(parameter: endpoint.buildRequest(with: queryingParameter))
+        var queryingParameters = parameters
+        queryingParameters.append(contentsOf: parameter)
+        return dataSource.publisher(parameter: endpoint.buildRequest(with: queryingParameters))
+    }
+}
+
+extension ApiEndpoint {
+    func createDataSource() -> LSAPINetworkDataSource {
+        LSAPINetworkDataSource(endpoint: self)
     }
 }
