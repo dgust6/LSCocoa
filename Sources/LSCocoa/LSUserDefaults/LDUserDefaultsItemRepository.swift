@@ -2,7 +2,7 @@ import Foundation
 import LSData
 import Combine
 
-public class LSUserDefaultsItemRepository<T: Codable>: NSObject, DataBasicRepository, DeletableStorage {
+public class LSUserDefaultsItemRepository<T: Codable>: NSObject, DataBasicRepository {
         
     public typealias Output = T?
     public typealias StoredItem = T?
