@@ -44,7 +44,7 @@ open class LSCoreDataRepository<ManagedObject>: DataRepository where ManagedObje
             .eraseToAnyPublisher()
     }
     
-    public func publisher(parameter: Parameter) -> AnyPublisher<StoredItem, Error> {
+    public func publisher(parameter: Parameter = []) -> AnyPublisher<StoredItem, Error> {
         let predicate = predicate(from: parameter)
         return publisher(predicate: predicate)
     }
