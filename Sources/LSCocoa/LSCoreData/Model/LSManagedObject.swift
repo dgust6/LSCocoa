@@ -21,7 +21,7 @@ public protocol LSManagedObject {
     static func fetchPredicate(for model: AppModel) -> NSPredicate
 }
 
-extension LSManagedObject {
+public extension LSManagedObject {
     static var entityName: String {
         ManagedObject.entity().name ?? String(describing: self)
     }
@@ -31,7 +31,7 @@ extension LSManagedObject {
     }
 }
 
-extension LSManagedObject {
+public extension LSManagedObject {
     init(model: AppModel, in context: NSManagedObjectContext) {
         self.init(context: context)
         populate(with: model, in: context)
@@ -56,13 +56,13 @@ extension LSManagedObject {
     }
 }
 
-extension NSSet {
+public extension NSSet {
     func toArray<T: LSManagedObjectConvertible>(of type: T.Type) -> [T] {
         (allObjects as? [T.ManagedObject])?.map { $0.toModel() } ?? []
     }
 }
 
-extension Array where Element: LSManagedObjectConvertible {
+public extension Array where Element: LSManagedObjectConvertible {
     func toManagedSet(in context: NSManagedObjectContext) -> NSSet {
         NSSet(array: self.map { Element.ManagedObject(model: $0, in: context) })
     }
