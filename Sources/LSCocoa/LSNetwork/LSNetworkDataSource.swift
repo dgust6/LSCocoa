@@ -42,8 +42,18 @@ public class LSNetworkDataSource: DataSource {
             .tryMap { data, response -> Data in
                 guard let httpResponse = response as? HTTPURLResponse else { throw LSNetworkError.notHttpResponse }
                 switch httpResponse.statusCode {
-                case 200...300:
+                case 200...299:
                     return data
+                case 400:
+                    throw LSNetworkError.badRequest
+                case 401:
+                    throw LSNetworkError.unauthorized
+                case 403:
+                    throw LSNetworkError.forbidden
+                case 404:
+                    throw LSNetworkError.notFound
+                case 500:
+                    throw LSNetworkError.internalServerError
                 default:
                     throw LSNetworkError.unknown(statusCode: httpResponse.statusCode)
                 }
@@ -51,6 +61,8 @@ public class LSNetworkDataSource: DataSource {
             .mapError { error -> LSNetworkError in
                 if let error = error as? URLSession.DataTaskPublisher.Failure {
                     return .urlError(error: error)
+                } else if let networkError = error as? LSNetworkError {
+                    return networkError
                 }
                 return LSNetworkError.appSpecific(error: error)
             }

@@ -6,4 +6,8 @@ public enum LSHttpMethod: String {
     case PATCH = "PATCH"
     case DELETE = "DELETE"
     case PUT = "PUT"
+    case HEAD = "HEAD"
+    case CONNECT = "CONNECT"
+    case OPTIONS = "OPTIONS"
+    case TRACE = "TRACE"
 }
