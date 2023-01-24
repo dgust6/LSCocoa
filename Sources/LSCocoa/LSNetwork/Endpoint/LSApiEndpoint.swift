@@ -1,4 +1,5 @@
 import Foundation
+import LSData
 
 public protocol ApiEndpoint {
     
@@ -21,7 +22,13 @@ extension ApiEndpoint {
 }
 
 extension ApiEndpoint {
-    public func buildRequest(with attributes: [LSApiEndpointAttribute]) -> URLRequest {
+    public func createDataSource() -> LSAPINetworkDataSource {
+        LSAPINetworkDataSource(endpoint: self)
+    }
+}
+
+extension ApiEndpoint {
+    public func buildRequest(with attributes: [LSApiEndpointAttribute] = []) -> URLRequest {
         
         var body = self.body
         var urlParameters  = self.urlParameters ?? [String: String]()

@@ -25,9 +25,3 @@ public class LSAPINetworkDataSource: DataSource {
         return dataSource.publisher(parameter: endpoint.buildRequest(with: queryingParameters))
     }
 }
-
-extension ApiEndpoint {
-    func createDataSource() -> LSAPINetworkDataSource {
-        LSAPINetworkDataSource(endpoint: self)
-    }
-}
