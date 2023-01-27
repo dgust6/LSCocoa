@@ -2,13 +2,13 @@ import Foundation
 import Combine
 import LSData
 
-public class LSNetworkDataSource: DataSource {
+public class NetworkDataSource: DataSource {
     
-    public static var shared = LSNetworkDataSource()
+    public static var shared = NetworkDataSource()
         
     public typealias Output = Data
     public typealias Parameter = URLRequest
-    public typealias OutputError = LSNetworkError
+    public typealias OutputError = NetworkError
     
     private let session: URLSession
     private let sessionConfiguration: URLSessionConfiguration
@@ -36,23 +36,35 @@ public class LSNetworkDataSource: DataSource {
         URLCache.shared.removeAllCachedResponses()
     }
     
-    public func publisher(parameter: URLRequest) -> AnyPublisher<Data, LSNetworkError> {
+    public func publisher(parameter: URLRequest) -> AnyPublisher<Data, NetworkError> {
         return session
             .dataTaskPublisher(for: parameter)
             .tryMap { data, response -> Data in
-                guard let httpResponse = response as? HTTPURLResponse else { throw LSNetworkError.notHttpResponse }
+                guard let httpResponse = response as? HTTPURLResponse else { throw NetworkError.notHttpResponse }
                 switch httpResponse.statusCode {
-                case 200...300:
+                case 200...299:
                     return data
+                case 400:
+                    throw NetworkError.badRequest
+                case 401:
+                    throw NetworkError.unauthorized
+                case 403:
+                    throw NetworkError.forbidden
+                case 404:
+                    throw NetworkError.notFound
+                case 500:
+                    throw NetworkError.internalServerError
                 default:
-                    throw LSNetworkError.unknown(statusCode: httpResponse.statusCode)
+                    throw NetworkError.unknown(statusCode: httpResponse.statusCode)
                 }
             }
-            .mapError { error -> LSNetworkError in
+            .mapError { error -> NetworkError in
                 if let error = error as? URLSession.DataTaskPublisher.Failure {
                     return .urlError(error: error)
+                } else if let networkError = error as? NetworkError {
+                    return networkError
                 }
-                return LSNetworkError.appSpecific(error: error)
+                return NetworkError.appSpecific(error: error)
             }
             .eraseToAnyPublisher()
     }

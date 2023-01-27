@@ -1,7 +1,7 @@
 import Foundation
 import LSData
 
-public class LSJsonEncodingMapper<T: Encodable>: Mapper {
+public class JsonEncodingMapper<T: Encodable>: Mapper {
 
     public typealias Input = T
     public typealias Output = Data?

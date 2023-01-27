@@ -2,7 +2,7 @@ import Foundation
 import LSData
 import Combine
 
-class LSUserDefaultsRepository {
+class LUserDefaultsRepository {
     
     private let userDefaults: UserDefaults
     private var repositoryMap = [String: Any]()
@@ -28,11 +28,11 @@ class LSUserDefaultsRepository {
             .eraseToAnyPublisher()
     }
     
-    private func fetchCreateIfNeeded(for key: String) -> LSUserDefaultsItemRepository<Data> {
-        if let repository = repositoryMap[key] as? LSUserDefaultsItemRepository<Data> {
+    private func fetchCreateIfNeeded(for key: String) -> UserDefaultsItemRepository<Data> {
+        if let repository = repositoryMap[key] as? UserDefaultsItemRepository<Data> {
             return repository
         } else {
-            let repository = LSUserDefaultsItemRepository<Data>(itemKey: key, userDefaults: userDefaults)
+            let repository = UserDefaultsItemRepository<Data>(itemKey: key, userDefaults: userDefaults)
             return repository
         }
     }

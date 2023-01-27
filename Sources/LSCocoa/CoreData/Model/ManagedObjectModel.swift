@@ -1,10 +1,10 @@
 import Foundation
 import CoreData
 
-public protocol LSManagedObject {
+public protocol ManagedObjectModel {
             
     associatedtype ManagedObject: NSManagedObject where ManagedObject == Self
-    associatedtype AppModel: LSManagedObjectConvertible where AppModel.ManagedObject == Self
+    associatedtype AppModel: ManagedObjectConvertible where AppModel.ManagedObject == Self
     
     static var entityName: String { get }
     
@@ -21,7 +21,7 @@ public protocol LSManagedObject {
     static func fetchPredicate(for model: AppModel) -> NSPredicate
 }
 
-public extension LSManagedObject {
+public extension ManagedObjectModel {
     static var entityName: String {
         ManagedObject.entity().name ?? String(describing: self)
     }
@@ -31,7 +31,7 @@ public extension LSManagedObject {
     }
 }
 
-public extension LSManagedObject {
+public extension ManagedObjectModel {
     init(model: AppModel, in context: NSManagedObjectContext) {
         self.init(context: context)
         populate(with: model, in: context)
@@ -57,12 +57,12 @@ public extension LSManagedObject {
 }
 
 public extension NSSet {
-    func toArray<T: LSManagedObjectConvertible>(of type: T.Type) -> [T] {
+    func toArray<T: ManagedObjectConvertible>(of type: T.Type) -> [T] {
         (allObjects as? [T.ManagedObject])?.map { $0.toModel() } ?? []
     }
 }
 
-public extension Array where Element: LSManagedObjectConvertible {
+public extension Array where Element: ManagedObjectConvertible {
     func toManagedSet(in context: NSManagedObjectContext) -> NSSet {
         NSSet(array: self.map { Element.ManagedObject(model: $0, in: context) })
     }

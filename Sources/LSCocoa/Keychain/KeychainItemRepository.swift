@@ -10,7 +10,7 @@ import LSData
 import Combine
 import Security
 
-public class LSKeychainItemRepository<T: Codable>: NSObject, DataBasicRepository, DeletableStorage {
+public class KeychainItemRepository<T: Codable>: NSObject, DataBasicRepository, DeletableStorage {
 
     public typealias Output = T?
     public typealias StoredItem = T?

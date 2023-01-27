@@ -41,11 +41,11 @@ And thats it, we're done! You can now create a `DataSource` like this:
 
     let queryRepositoriesDataSource = SearchRepositoriesEndpoint()
         .createDataSource()
-    //erased type would be: LSAnyDataSource<Data, [LSApiEndpointAttribute], LSNetworkError> 
+    //erased type would be: AnyDataSource<Data, [ApiEndpointAttribute], NetworkError> 
 
 This `DataSource` is useful, but it has two things which can be imporved (for general usage):
 + Output type is `Data`, and we want to use our domain model `Repository` instead
-+ Parameter type is `[LSApiEndpointAttribute]`, which enables us to add any request parameter, such as adding headers, chainging http method, etc. We want this parameter to be query `String` to prohibit adding anything else
++ Parameter type is `[ApiEndpointAttribute]`, which enables us to add any request parameter, such as adding headers, chainging http method, etc. We want this parameter to be query `String` to prohibit adding anything else
 
 #### 2. Create a network model (Optional):
 In most cases you wish to create a network model to serve as __[ACL pattern](https://docs.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer)__. This enables us to have our domain model separate from our external models (such as these networking and CoreData modles) making our domain model and our app logic immune to changes in backend and it's response which can contain various metadata (such as paging or analytics).
@@ -79,7 +79,7 @@ Now we can map the output like this:
     let queryRepositoriesDataSource = SearchRepositoriesEndpoint()
         .createDataSource()
         .jsonDecodeMap(to: SearchRepositoriesEndpoint.Response.self)
-    //erased type would be: LSAnyDataSource<SearchRepositoriesEndpoint.Response, [LSApiEndpointAttribute], LSNetworkError>
+    //erased type would be: AnyDataSource<SearchRepositoriesEndpoint.Response, [ApiEndpointAttribute], NetworkError>
 #### 4. Map response to our domain model
 There are two ways to map, one using `Mapper` and one using a simple completion handler. Here we will create a more complex `Mapper`
 
@@ -102,7 +102,7 @@ Now our `DataSource` will look something like this:
         .createDataSource()
         .jsonDecodeMap(to: SearchRepositoriesEndpoint.Response.self)
         .outMap(with: SearchRepositoriesOutputMapper())
-    //erased type would be: LSAnyDataSource<Repository, [LSApiEndpointAttribute], LSNetworkError>
+    //erased type would be: AnyDataSource<Repository, [ApiEndpointAttribute], NetworkError>
 
 Almost there! We are now outputting our domain model `Repository` instead of initial `Data`, now we just need to map there parameter.
 
@@ -113,10 +113,10 @@ When mapping `Input` above we used `Mapper` class but for showcase purposes we w
         .createDataSource()
         .jsonDecodeMap(to: SearchRepositoriesEndpoint.Response.self)
         .outMap(with: SearchRepositoriesOutputMapper())
-        .paramMap { (queryString: String) -> [LSApiEndpointAttribute] in
+        .paramMap { (queryString: String) -> [ApiEndpointAttribute] in
             return [.addUrlParameter(key: "q", value: queryString)]
         }
-    //erased type would be: LSAnyDataSource<Repository, String, LSNetworkError>
+    //erased type would be: AnyDataSource<Repository, String, NetworkError>
 
 #### 6. All done!
 Now we have a `DataSource` which publishes our domain model object `Repository` and supports `String` argument to query the search.
@@ -135,7 +135,7 @@ Using the above code we can call `refreshable` method to create `LSRefreshableDa
         .createDataSource()
         .jsonDecodeMap(to: SearchRepositoriesEndpoint.Response.self)
         .outMap(with: SearchRepositoriesOutputMapper())
-        .paramMap { (queryString: String) -> [LSApiEndpointAttribute] in
+        .paramMap { (queryString: String) -> [ApiEndpointAttribute] in
             return [.addUrlParameter(key: "q", value: queryString)]
         }
         .refreshable(parameter: "")

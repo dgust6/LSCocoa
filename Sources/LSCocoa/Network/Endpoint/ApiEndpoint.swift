@@ -1,19 +1,32 @@
 import Foundation
+import LSData
+
+public protocol EndpointAttributesConvertible {
+    var endpointAttributes: [ApiEndpointAttribute] { get }
+}
+
+extension Array: EndpointAttributesConvertible where Element == ApiEndpointAttribute {
+    public var endpointAttributes: [ApiEndpointAttribute] {
+        self
+    }
+}
 
 public protocol ApiEndpoint {
     
-    var method: LSHttpMethod { get }
+    associatedtype Parametrers: EndpointAttributesConvertible = [ApiEndpointAttribute]
+    
+    var method: HttpMethod { get }
     var baseUrl: URL { get }
     var path: String? { get }
     var body: Codable? { get }
     var urlParameters: [String: String]? { get }
     var headers: [String: String]? { get }
     
-    func buildRequest(with attributes: [LSApiEndpointAttribute]) -> URLRequest
+    func buildRequest(with attributes: Parametrers?) -> URLRequest
 }
 
 extension ApiEndpoint {
-    public var method: LSHttpMethod { .GET }
+    public var method: HttpMethod { .GET }
     public var path: String? { nil }
     public var body: Codable? { nil }
     public var urlParameters: [String: String]? { nil }
@@ -21,7 +34,7 @@ extension ApiEndpoint {
 }
 
 extension ApiEndpoint {
-    public func buildRequest(with attributes: [LSApiEndpointAttribute]) -> URLRequest {
+    public func buildRequest(with attributes: Parametrers? = nil) -> URLRequest {
         
         var body = self.body
         var urlParameters  = self.urlParameters ?? [String: String]()
@@ -29,7 +42,7 @@ extension ApiEndpoint {
         var method = self.method
         var path = self.path ?? ""
         
-        for attribute in attributes {
+        for attribute in attributes?.endpointAttributes ?? [] {
             switch attribute {
             case .addBody(let newBody):
                 body = newBody
