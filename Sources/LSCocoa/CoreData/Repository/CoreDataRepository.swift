@@ -7,16 +7,16 @@ public enum RepositoryError: Error {
     case contextSaveFailed
 }
 
-open class LSCoreDataRepository<ManagedObject>: DataRepository where ManagedObject: LSManagedObject {
+open class CoreDataRepository<ManagedObject>: DataRepository where ManagedObject: ManagedObjectModel {
     
     public typealias StoredItem = [ManagedObject.AppModel]
     public typealias Parameter = [LSValuedAttribute<Any?, ManagedObject>]
     public typealias DeletionReturn = Void
 
-    public let stack: LSCoreDataStack
+    public let stack: CoreDataStack
     private let reactOnChildUpdates: Bool //updates it's publishers whenever context is changed
     
-    public init(stack: LSCoreDataStack, reactOnChildUpdates: Bool = true) {
+    public init(stack: CoreDataStack, reactOnChildUpdates: Bool = true) {
         self.reactOnChildUpdates = reactOnChildUpdates
         self.stack = stack
     }

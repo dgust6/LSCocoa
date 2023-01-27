@@ -1,6 +1,6 @@
 import Foundation
 
-public enum LSNetworkError: Error {
+public enum NetworkError: Error {
     case badRequest
     case unauthorized
     case forbidden

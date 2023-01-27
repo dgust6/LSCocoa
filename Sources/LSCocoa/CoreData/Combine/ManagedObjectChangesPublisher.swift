@@ -4,12 +4,12 @@ import Combine
 
 public extension NSManagedObjectContext {
     func changesPublisher<Object: NSManagedObject>(for fetchRequest: NSFetchRequest<Object>, saveContext: NSManagedObjectContext? = nil)
-        -> LSManagedObjectChangesPublisher<Object> {
-        LSManagedObjectChangesPublisher(fetchRequest: fetchRequest, context: self, saveContext: saveContext)
+        -> ManagedObjectChangesPublisher<Object> {
+        ManagedObjectChangesPublisher(fetchRequest: fetchRequest, context: self, saveContext: saveContext)
     }
 }
 
-public struct LSManagedObjectChangesPublisher<Object: NSManagedObject>: Publisher {
+public struct ManagedObjectChangesPublisher<Object: NSManagedObject>: Publisher {
     public typealias Output = [Object]
     public typealias Failure = Error
 

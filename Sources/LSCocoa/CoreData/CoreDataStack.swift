@@ -1,7 +1,7 @@
 import Foundation
 import CoreData
 
-public class LSCoreDataStack {
+public class CoreDataStack {
     
     public let mainContext: NSManagedObjectContext
     public let backgroundContext: NSManagedObjectContext

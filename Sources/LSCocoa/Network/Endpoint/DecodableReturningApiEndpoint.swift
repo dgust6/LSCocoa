@@ -12,7 +12,7 @@ public protocol DecodableReturningApiEndpoint: ApiEndpoint {
 }
 
 extension DecodableReturningApiEndpoint {
-    public func createDecodingDataSource() -> LSOutputMappingDataSource<LSAPINetworkDataSource, LSJsonDecodingMapper<ReturnDecodable>> {
+    public func createDataSource() -> OutputMappingDataSource<APINetworkDataSource<Self>, JsonDecodingMapper<ReturnDecodable>> {
         createDataSource().jsonDecodeMap(to: ReturnDecodable.self)
     }
 }

@@ -1,6 +1,6 @@
 import Foundation
 
-public enum LSHttpMethod: String {
+public enum HttpMethod: String {
     case GET = "GET"
     case POST = "POST"
     case PATCH = "PATCH"

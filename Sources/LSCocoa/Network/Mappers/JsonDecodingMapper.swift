@@ -1,7 +1,7 @@
 import Foundation
 import LSData
 
-public class LSJsonDecodingMapper<T: Decodable>: Mapper {
+public class JsonDecodingMapper<T: Decodable>: Mapper {
     
     public typealias Input = Data
     public typealias Output = T?
@@ -15,7 +15,7 @@ public class LSJsonDecodingMapper<T: Decodable>: Mapper {
 }
 
 extension DataSource where Output == Data {
-    public func jsonDecodeMap<T: Decodable>(to type: T.Type) -> LSOutputMappingDataSource<Self, LSJsonDecodingMapper<T>> {
-        outMap(with: LSJsonDecodingMapper<T>())
+    public func jsonDecodeMap<T: Decodable>(to type: T.Type) -> OutputMappingDataSource<Self, JsonDecodingMapper<T>> {
+        outMap(with: JsonDecodingMapper<T>())
     }
 }
