@@ -10,7 +10,7 @@ public enum RepositoryError: Error {
 open class CoreDataRepository<ManagedObject>: DataRepository where ManagedObject: ManagedObjectModel {
     
     public typealias StoredItem = [ManagedObject.AppModel]
-    public typealias Parameter = [LSValuedAttribute<Any?, ManagedObject>]
+    public typealias Parameter = [OwnedValuedAttribute<Any?, ManagedObject>]
     public typealias DeletionReturn = Void
 
     public let stack: CoreDataStack
@@ -60,7 +60,7 @@ open class CoreDataRepository<ManagedObject>: DataRepository where ManagedObject
         }
     }
     
-    private func predicate(from parameter: Parameter) -> NSPredicate? {
+    public func predicate(from parameter: Parameter) -> NSPredicate? {
         let query = parameter.map { "\($0.attribute.key) == %@" }.joined(separator: " AND ")
         let cvars = parameter.compactMap { $0.value as? CVarArg }
         let predicate = parameter.isEmpty ? nil : NSPredicate(format: query, cvars)

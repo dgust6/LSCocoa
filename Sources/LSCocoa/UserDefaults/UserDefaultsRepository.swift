@@ -2,7 +2,7 @@ import Foundation
 import LSData
 import Combine
 
-class LUserDefaultsRepository {
+class UserDefaultsRepository {
     
     private let userDefaults: UserDefaults
     private var repositoryMap = [String: Any]()

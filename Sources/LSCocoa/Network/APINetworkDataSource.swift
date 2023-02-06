@@ -23,7 +23,7 @@ public class APINetworkDataSource<Endpoint: ApiEndpoint>: DataSource {
 }
 
 extension ApiEndpoint {
-    public func createDataSource() -> APINetworkDataSource<Self> {
+    public func createDataSource(with networkDataSource: AnyDataSource<Data, URLRequest, NetworkError> = NetworkDataSource.shared.erase()) -> APINetworkDataSource<Self> {
         APINetworkDataSource(endpoint: self)
     }
 }
