@@ -11,9 +11,8 @@ import Combine
 import Security
 
 public class KeychainItemRepository<T: Codable>: NSObject, DataBasicRepository {
-
-    public typealias Output = T?
-    public typealias StoredItem = T?
+    
+    public typealias StoredItem = T
     public typealias OutputError = Never
     
     let itemKey: String
@@ -27,7 +26,11 @@ public class KeychainItemRepository<T: Codable>: NSObject, DataBasicRepository {
         subject.send(storedItem)
     }
     
-    public func store(_ item: T?) {
+    public func store(_ item: T) {
+        storeNullable(item)
+    }
+    
+    private func storeNullable(_ item: T?) {
         guard let itemData = try? JSONEncoder().encode(item) else { return }
         let query = [
             kSecClass as String       : kSecClassGenericPassword as String,
@@ -61,11 +64,11 @@ public class KeychainItemRepository<T: Codable>: NSObject, DataBasicRepository {
         subject.eraseToAnyPublisher()
     }
     
-    public func delete(_ item: T?) {
-        store(nil)
+    public func delete(_ item: T) {
+        storeNullable(nil)
     }
     
     public func deleteAll() {
-        store(nil)
+        storeNullable(nil)
     }
 }

@@ -11,11 +11,13 @@ class UserDefaultsRepository {
         self.userDefaults = userDefaults
     }
     
-    public func store<T: Encodable>(_ item: T?, for key: String = String(describing: T.self)) {
+    public func store<T: Encodable>(_ item: T, for key: String = String(describing: T.self)) {
         let encoder = JSONEncoder()
         let value = try? encoder.encode(item)
         let repository = fetchCreateIfNeeded(for: key)
-        repository.store(value)
+        if let value = value {
+            repository.store(value)
+        }
     }
     
     public func publisher<T: Decodable>(for key: String = String(describing: T.self), ofType: T.Type = T.self) -> AnyPublisher<T?, Never> {

@@ -15,7 +15,7 @@ public struct ManagedObjectChangesPublisher<Object: NSManagedObject>: Publisher 
 
     public let fetchRequest: NSFetchRequest<Object>
     public let context: NSManagedObjectContext
-    private let saveContext: NSManagedObjectContext?
+    public let saveContext: NSManagedObjectContext?
 
     public init(fetchRequest: NSFetchRequest<Object>, context: NSManagedObjectContext, saveContext: NSManagedObjectContext?) {
         self.fetchRequest = fetchRequest

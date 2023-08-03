@@ -1,6 +1,6 @@
 import Foundation
 
-public enum ApiEndpointAttribute {
+public enum EndpointAttribute {
     case addHeader(field: String, value: String)
     case addBody(codable: Codable)
     case addUrlParameter(key: String, value: String)
