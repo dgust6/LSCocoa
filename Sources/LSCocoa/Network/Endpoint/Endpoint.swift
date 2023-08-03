@@ -2,18 +2,18 @@ import Foundation
 import LSData
 
 public protocol EndpointAttributesConvertible {
-    var endpointAttributes: [ApiEndpointAttribute] { get }
+    var endpointAttributes: [EndpointAttribute] { get }
 }
 
-extension Array: EndpointAttributesConvertible where Element == ApiEndpointAttribute {
-    public var endpointAttributes: [ApiEndpointAttribute] {
+extension Array: EndpointAttributesConvertible where Element == EndpointAttribute {
+    public var endpointAttributes: [EndpointAttribute] {
         self
     }
 }
 
-public protocol ApiEndpoint {
+public protocol Endpoint {
     
-    associatedtype Parametrers: EndpointAttributesConvertible = [ApiEndpointAttribute]
+    associatedtype Parametrers: EndpointAttributesConvertible = [EndpointAttribute]
     
     var method: HttpMethod { get }
     var baseUrl: URL { get }
@@ -25,7 +25,7 @@ public protocol ApiEndpoint {
     func buildRequest(with attributes: Parametrers?) -> URLRequest
 }
 
-extension ApiEndpoint {
+extension Endpoint {
     public var method: HttpMethod { .GET }
     public var path: String? { nil }
     public var body: Codable? { nil }
@@ -33,7 +33,7 @@ extension ApiEndpoint {
     public var headers: [String: String]? { nil }
 }
 
-extension ApiEndpoint {
+extension Endpoint {
     public func buildRequest(with attributes: Parametrers? = nil) -> URLRequest {
         
         var body = self.body

@@ -7,33 +7,33 @@ protocol ValuedAttribute {
     var value: ValueType { get }
 }
 
-public struct LSValuedAttribute<Type, Owner>: ValuedAttribute {
+public struct OwnedValuedAttribute<T, Owner>: ValuedAttribute {
     
-    typealias ValueType = Type
+    typealias ValueType = T
     
-    public let attribute: LSAttribute<Type, Owner>
-    public let value: Type
+    public let attribute: OwnedAttribute<T, Owner>
+    public let value: T
     
     public var key: String {
         attribute.key
     }
     
-    public init(attribute: LSAttribute<Type, Owner>, value: Type) {
+    public init(attribute: OwnedAttribute<T, Owner>, value: T) {
         self.attribute = attribute
         self.value = value
     }
 }
 
-extension LSValuedAttribute {
+extension OwnedValuedAttribute {
     func asAnyValuedAttribute() -> AnyValuedAttribute<Owner> {
         AnyValuedAttribute<Owner>(attribute: attribute.asAnyAttribute(), value: value as Any?)
     }
 }
 
-extension LSValuedAttribute: Equatable where Type: Equatable {
-    public static func == (lhs: LSValuedAttribute<Type, Owner>, rhs: LSValuedAttribute<Type, Owner>) -> Bool {
+extension OwnedValuedAttribute: Equatable where T: Equatable {
+    public static func == (lhs: OwnedValuedAttribute<T, Owner>, rhs: OwnedValuedAttribute<T, Owner>) -> Bool {
         lhs.value == rhs.value && lhs.attribute.key == rhs.attribute.key
     }
 }
 
-public typealias AnyValuedAttribute<Owner> = LSValuedAttribute<Any?, Owner>
+public typealias AnyValuedAttribute<Owner> = OwnedValuedAttribute<Any?, Owner>

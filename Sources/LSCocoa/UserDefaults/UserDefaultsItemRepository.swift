@@ -2,10 +2,11 @@ import Foundation
 import LSData
 import Combine
 
-public class UserDefaultsItemRepository<T: Codable>: NSObject, DataBasicRepository {
-        
+public class UserDefaultsItemRepository<T: Codable>: NSObject, DataSource, DataStorage, DeletableStorage {
+    
     public typealias Output = T?
     public typealias StoredItem = T?
+    public typealias DeletableItem = T?
     public typealias OutputError = Never
     
     let itemKey: String
@@ -26,7 +27,7 @@ public class UserDefaultsItemRepository<T: Codable>: NSObject, DataBasicReposito
         guard keyPath == self.itemKey else {
             return
         }
-        guard let data = object as? Data else {
+        guard let data = change?[NSKeyValueChangeKey.newKey] as? Data else {
             subject.send(nil)
             return
         }

@@ -4,7 +4,7 @@ protocol Attribute {
     var key: String { get }
 }
 
-public struct LSAttribute<Type, Owner>: Attribute {
+public struct OwnedAttribute<T, Owner>: Attribute {
     public let key: String
     
     public init(key: String) {
@@ -12,11 +12,10 @@ public struct LSAttribute<Type, Owner>: Attribute {
     }
 }
 
-extension LSAttribute {
-    
+extension OwnedAttribute {
     func asAnyAttribute() -> AnyAttribute<Owner> {
         AnyAttribute<Owner>(key: key)
     }
 }
 
-public typealias AnyAttribute<Owner> = LSAttribute<Any?, Owner>
+public typealias AnyAttribute<Owner> = OwnedAttribute<Any?, Owner>
