@@ -3,10 +3,10 @@
     "pins": [
       {
         "package": "LSData",
-        "repositoryURL": "https://github.com/dinogustinn/LSData.git",
+        "repositoryURL": "https://github.com/dinogustinn/LSData",
         "state": {
           "branch": "master",
-          "revision": "700123ed92ad554c9961ffa9cd313ffc7c46e24d",
+          "revision": "efc85aa6e2b9b9ed3e2281766470bde5bb006482",
           "version": null
         }
       }

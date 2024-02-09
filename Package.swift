@@ -15,14 +15,17 @@ let package = Package(
             targets: ["LSCocoa"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/dinogustinn/LSData.git", .branch("master"))
+        .package(name: "LSData", url: "https://github.com/dinogustinn/LSData", branch: "master"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "LSCocoa",
-            dependencies: [.product(name: "LSData", package: "LSData")]),
+            dependencies: [
+                "LSData"
+            ]
+        ),
         .testTarget(
             name: "LSCocoaTests",
             dependencies: ["LSCocoa"]),
