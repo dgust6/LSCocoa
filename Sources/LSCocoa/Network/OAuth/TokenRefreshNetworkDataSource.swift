@@ -8,10 +8,10 @@ public class TokenRefreshNetworkDataSource: DataSource {
     public typealias Parameter = URLRequest
     public typealias OutputError = TokenRefreshError
     
-    private let networkDataSource: AnyDataSource<NetworkResponse, URLRequest, URLError>
+    private let networkDataSource: any DataSource<NetworkResponse, URLRequest, URLError>
     private let tokenRefreshService: OAuthTokenRefreshService
     
-    public init(networkDataSource: AnyDataSource<NetworkResponse, URLRequest, URLError>, tokenRefreshService: OAuthTokenRefreshService) {
+    public init(networkDataSource: any DataSource<NetworkResponse, URLRequest, URLError>, tokenRefreshService: OAuthTokenRefreshService) {
         self.networkDataSource = networkDataSource
         self.tokenRefreshService = tokenRefreshService
     }

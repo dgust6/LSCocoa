@@ -2,12 +2,12 @@ import Combine
 import Foundation
 import LSData
 
-public class NetworkResponseToErrorMapper<DS: DataSource>: DataSource where DS.Output == NetworkResponse {
+public class NetworkResponseToErrorMapper<DS: DataSource>: DataSource where DS.Output == NetworkResponse, DS.OutputError == URLError {
     
     public typealias Output = Data
     public typealias OutputError = NetworkError
     
-    private let modifiedDataSource: AnyDataSource<Data, DS.Parameter, NetworkError>
+    private let modifiedDataSource: any DataSource<Data, DS.Parameter, NetworkError>
     
     public init(dataSource: DS) {
         modifiedDataSource = dataSource.modifyPublisher { publisher in
@@ -26,21 +26,26 @@ public class NetworkResponseToErrorMapper<DS: DataSource>: DataSource where DS.O
                 }
                 .mapError { error in
                     if let urlError = error as? URLError {
-                        return .urlError(urlError)
+                        return NetworkError.urlError(urlError)
                     } else if let responseError = error as? NetworkResponseError {
-                        return .responseError(responseError)
+                        return NetworkError.responseError(responseError)
                     } else if let networkError = error as? NetworkError {
                         return networkError
                     } else {
-                        return .unknown
+                        return NetworkError.unknown
                     }
                 }
                 .eraseToAnyPublisher()
         }
-        .erase()
     }
     
     public func publisher(parameter: DS.Parameter) -> AnyPublisher<Data, NetworkError> {
         modifiedDataSource.publisher(parameter: parameter)
+    }
+}
+
+public extension DataSource where Self.Output == NetworkResponse, Self.OutputError == URLError {
+    func networkResponseMap() -> some DataSource<Data, Self.Parameter, NetworkError> {
+        NetworkResponseToErrorMapper(dataSource: self)
     }
 }

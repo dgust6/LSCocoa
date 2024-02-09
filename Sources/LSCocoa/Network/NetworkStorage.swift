@@ -8,9 +8,9 @@ public class NetworkEndpointDataStorage<NetworkEndpoint: Endpoint>: DataStorage 
     public typealias StorageReturn = AnyPublisher<NetworkResponse, URLError>
 
     public let endpoint: NetworkEndpoint
-    private let dataSource: AnyDataSource<NetworkResponse, URLRequest, URLError>
+    private let dataSource: any DataSource<NetworkResponse, URLRequest, URLError>
 
-    public init(endpoint: NetworkEndpoint, dataSource: AnyDataSource<NetworkResponse, URLRequest, URLError> = URLSession.shared.erase()) {
+    public init(endpoint: NetworkEndpoint, dataSource: any DataSource<NetworkResponse, URLRequest, URLError> = URLSession.shared) {
         self.endpoint = endpoint
         self.dataSource = dataSource
     }

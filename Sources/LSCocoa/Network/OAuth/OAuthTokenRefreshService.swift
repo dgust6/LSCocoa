@@ -4,17 +4,17 @@ import Combine
 
 public class OAuthTokenRefreshService {
     
-    private let refreshEndpointDataSource: AnyDataSource<TokenRefreshResponse, String, URLError>
+    private let refreshEndpointDataSource: any DataSource<TokenRefreshResponse, String, URLError>
     private let accessTokenStorage: KeychainItemRepository<String>
     private let refreshTokenStorage: KeychainItemRepository<String>
-    private let networkDataSource: AnyDataSource<NetworkResponse, URLRequest, URLError>
+    private let networkDataSource:  any DataSource<NetworkResponse, URLRequest, URLError>
     private var cancelBag = Set<AnyCancellable>()
     
     public init(
-        refreshEndpointDataSource: AnyDataSource<TokenRefreshResponse, String, URLError>,
+        refreshEndpointDataSource:  any DataSource<TokenRefreshResponse, String, URLError>,
         accessTokenStorage: KeychainItemRepository<String>,
         refreshTokenStorage: KeychainItemRepository<String>,
-        networkDataSource: AnyDataSource<NetworkResponse, URLRequest, URLError> = URLSession.shared.erase()
+        networkDataSource:  any DataSource<NetworkResponse, URLRequest, URLError> = URLSession.shared
     ) {
         self.refreshEndpointDataSource = refreshEndpointDataSource
         self.accessTokenStorage = accessTokenStorage

@@ -10,9 +10,9 @@ public class NetworkEndpointDataSource<NetworkEndpoint: Endpoint>: DataSource {
     
     public let endpoint: NetworkEndpoint
     
-    private let dataSource: AnyDataSource<NetworkResponse, URLRequest, URLError>
+    private let dataSource: any DataSource<NetworkResponse, URLRequest, URLError>
     
-    public init(endpoint: NetworkEndpoint, dataSource: AnyDataSource<NetworkResponse, URLRequest, URLError> = URLSession.shared.erase()) {
+    public init(endpoint: NetworkEndpoint, dataSource: any DataSource<NetworkResponse, URLRequest, URLError> = URLSession.shared) {
         self.endpoint = endpoint
         self.dataSource = dataSource
     }
@@ -23,18 +23,16 @@ public class NetworkEndpointDataSource<NetworkEndpoint: Endpoint>: DataSource {
 }
 
 extension Endpoint {
-    public func createDataSource(with networkDataSource: AnyDataSource<NetworkResponse, URLRequest, URLError> = URLSession.shared.erase()) -> NetworkEndpointDataSource<Self> {
-        NetworkEndpointDataSource(endpoint: self)
+    public func createDataSource(with networkDataSource: any DataSource<NetworkResponse, URLRequest, URLError> = URLSession.shared) -> some DataSource<Data, Parametrers, NetworkError> {
+        let dataSource = NetworkEndpointDataSource(endpoint: self)
+        return NetworkResponseToErrorMapper(dataSource: dataSource)
     }
 }
 
 extension DecodableReturningEndpoint {
-    public func createDataSource() -> AnyDataSource<ReturnDecodable?, Parametrers, URLError> {
-        createDataSource()
-            .outMap {
-                $0.data
-            }
+    public func createDecodingDataSource() -> some DataSource<ReturnDecodable, Parametrers, ErrorUnion<NetworkError, DecodingError>> {
+        let dataSource = NetworkEndpointDataSource(endpoint: self)
+        return NetworkResponseToErrorMapper(dataSource: dataSource)
             .jsonDecodeMap(to: ReturnDecodable.self)
-            .erase()
     }
 }
